@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
-// import { API } from "../../api/api";
-
-// import { API } from "../../api/api";
+import { API } from "../../api/api";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -13,21 +11,19 @@ const ForgotPassword = () => {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      // const response = await API.post("/password-reset-request/", {
-      //   email: values.email,
-      // });
-
-      // // // If successful, save the token in localStorage
-      // localStorage.setItem("email", values.email);
-
-      // Show success message
-      message.success("Send code on your email successful!");
-
-      navigate("/check-code");
+      const response = await API.post("/user_auth/send-passwordreset-otp/", {
+        email: values.email,
+      });
+      if (response.status === 200) {
+        localStorage.setItem("email", values.email);
+        // Show success message
+        message.success("Send code on your email successful!");
+        navigate("/check-code");
+      }
     } catch (error) {
-      // Show error message
       message.error(
-        "Send code on your email failed. Please try again." // error.response?.data?.message
+        error?.response?.data?.error ||
+          "Send code on your email failed. Please try again."
       );
     } finally {
       setLoading(false); // Stop loading after request

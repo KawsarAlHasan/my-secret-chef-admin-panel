@@ -1,12 +1,8 @@
 import { useState } from "react";
-import { Table, Modal, notification } from "antd";
+import { Table } from "antd";
 import IsError from "../../components/IsError";
 import IsLoading from "../../components/IsLoading";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-// import { API, useStripePayments } from "../../api/api";
-import { usePayments } from "../../services/paymentService";
-
-const { confirm } = Modal;
+import { usePayouts } from "../../api/api";
 
 function Payments() {
   const [filter, setFilter] = useState({
@@ -14,10 +10,9 @@ function Payments() {
     limit: 10,
   });
 
-  const { paymentsData, pagination, isLoading, isError, error, refetch } =
-    usePayments(filter);
+  const { payouts, isLoading, isError, error, refetch } = usePayouts(filter);
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (pagination) => {
     setFilter((prev) => ({
       ...prev,
       page: pagination.current,
@@ -28,9 +23,13 @@ function Payments() {
   const columns = [
     {
       title: <span>SL No.</span>,
-      dataIndex: "serial_number",
-      key: "serial_number",
-      render: (serial_number) => <span className="">#{serial_number}</span>,
+      dataIndex: "date",
+      key: "date",
+      render: (text, record, index) => (
+        <span className="">
+          #{index + 1 + (filter.page - 1) * filter.limit}
+        </span>
+      ),
     },
     {
       title: <span>User</span>,
@@ -68,34 +67,18 @@ function Payments() {
     return <IsError error={error} refetch={refetch} />;
   }
 
-  // pagination
-  // :
-  // limit
-  // :
-  // 10
-  // page
-  // :
-  // 1
-  // totalPages
-  // :
-  // 5
-  // totalPayments
-  // :
-  // 50
-
-  console.log(paymentsData, "paymentsData");
-
   return (
     <div className="p-4">
       <Table
         columns={columns}
-        dataSource={paymentsData}
-        rowKey="id"
+        dataSource={payouts?.results}
+        rowKey="date"
         pagination={{
           current: filter.page,
           pageSize: filter.limit,
-          total: pagination.totalPayments,
-          showSizeChanger: false,
+          total: payouts.count,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
         }}
         onChange={handleTableChange}
         loading={isLoading}

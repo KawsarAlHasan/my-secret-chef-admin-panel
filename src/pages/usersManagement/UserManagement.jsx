@@ -5,10 +5,10 @@ import IsError from "../../components/IsError";
 import IsLoading from "../../components/IsLoading";
 import { EyeOutlined } from "@ant-design/icons";
 import ViewUser from "./ViewUser";
-import { useAllUsers } from "../../services/userService";
 import LiveSupportChat from "./liveSupportChat/LiveSupportChat";
 import SavedRecipes from "./savedRecipes/SavedRecipes";
 import PreviousScans from "./previousScans/PreviousScans";
+import { useAllUser } from "../../api/api";
 
 function UserManagement() {
   const [filter, setFilter] = useState({
@@ -24,8 +24,9 @@ function UserManagement() {
   const [isPreviousScansModal, setIsPreviousScansModal] = useState(false);
   const [isSavedRecipesModal, setIsSavedRecipesModal] = useState(false);
 
-  const { allUsers, pagination, isLoading, isError, error, refetch } =
-    useAllUsers(filter);
+  const { allUsers, isLoading, isError, error, refetch } = useAllUser(filter);
+
+  console.log(allUsers, "allUsers");
 
   const handleUserDetails = (userData) => {
     setUserDetailsData(userData);
@@ -56,7 +57,7 @@ function UserManagement() {
     setIsSavedRecipesModal(false);
   };
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  const handleTableChange = (pagination) => {
     setFilter((prev) => ({
       ...prev,
       page: pagination.current,
@@ -67,9 +68,13 @@ function UserManagement() {
   const columns = [
     {
       title: <span>Sl no.</span>,
-      dataIndex: "serial_number",
-      key: "serial_number",
-      render: (serial_number) => <span>#{serial_number}</span>,
+      dataIndex: "id",
+      key: "id",
+      render: (text, record, index) => (
+        <span className="">
+          #{index + 1 + (filter.page - 1) * filter.limit}
+        </span>
+      ),
     },
     {
       title: <span>User</span>,
@@ -166,13 +171,13 @@ function UserManagement() {
     <div className="p-4">
       <Table
         columns={columns}
-        dataSource={allUsers}
+        dataSource={allUsers.results}
         rowKey="id"
         pagination={{
           current: filter.page,
           pageSize: filter.limit,
-          total: pagination.totalUser,
-          showSizeChanger: false,
+          total: allUsers.count,
+          showSizeChanger: true,
           pageSizeOptions: ["10", "20", "50", "100"],
         }}
         onChange={handleTableChange}

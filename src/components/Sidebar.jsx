@@ -3,19 +3,18 @@ import { AppstoreOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaUsers } from "react-icons/fa";
 import { FaBuildingFlag } from "react-icons/fa6";
-// import { signOutAdmin, useAdminDashboard } from "../api/api";
+import { signOutAdmin, useAdminDashboard } from "../api/api";
 
 const { SubMenu } = Menu;
 
 const Sidebar = ({ onClick }) => {
   const location = useLocation();
 
-  // const { adminDashboard, isLoading, isError, error, refetch } =
-  //   useAdminDashboard();
+  const { adminDashboard } = useAdminDashboard();
 
   const navigate = useNavigate();
   const handleSignOut = () => {
-    // signOutAdmin();
+    signOutAdmin();
     navigate("/login");
   };
 
@@ -29,7 +28,7 @@ const Sidebar = ({ onClick }) => {
     return ["1"];
   };
 
-  const isSuperAdmin = "superadmin";
+  const isSuperAdmin = adminDashboard?.role === "superadmin";
 
   const sidebarItems = [
     {
@@ -43,7 +42,6 @@ const Sidebar = ({ onClick }) => {
       icon: <FaUsers />,
       label: <Link to="/user-management">User Management</Link>,
     },
-
 
     ...(isSuperAdmin
       ? [
@@ -93,7 +91,6 @@ const Sidebar = ({ onClick }) => {
           backgroundColor: "#ffffff",
           color: "#002436",
         }}
-        // theme="dark"
       />
     </div>
   );

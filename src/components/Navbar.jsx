@@ -2,27 +2,24 @@ import { Avatar, Dropdown, Button, Divider } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import logoImage from "../assets/logo.png";
 import { MenuOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
-// import { signOutAdmin, useAdminDashboard } from "../api/api";
 import ChangePassword from "./ChangePassword";
 import AccountSetting from "./AccountSetting";
+import { signOutAdmin, useAdminDashboard } from "../api/api";
 
 const Navbar = ({ showDrawer }) => {
-  // const { adminDashboard, isLoading, isError, error, refetch } =
-  //   useAdminDashboard();
+  const { adminDashboard: adminProfile, isLoading, isError, error, refetch } =
+    useAdminDashboard();
+
 
   const navigate = useNavigate();
 
   const handleSignOut = () => {
-    // signOutAdmin();
+    signOutAdmin();
     navigate("/login");
   };
 
-  const adminProfile = {
-    name: "Admin Name",
-    role: "Super Admin",
-    email: "super@admin.com",
-    phone_number: "1234567890",
-  };
+
+
 
   const profileMenuItems = [
     {
@@ -45,7 +42,7 @@ const Navbar = ({ showDrawer }) => {
     },
     {
       key: "profile",
-      label: <AccountSetting adminProfile={adminProfile}  />,
+      label: <AccountSetting adminProfile={adminProfile} refetch={refetch}  />,
     },
     {
       key: "change-password",
@@ -94,6 +91,7 @@ const Navbar = ({ showDrawer }) => {
               overlayClassName="w-[300px]"
             >
               <Avatar
+                src={adminProfile?.profile_picture}
                 icon={<UserOutlined className="" />}
                 size="large"
                 className="cursor-pointer border border-white hover:opacity-80 transition-opacity"

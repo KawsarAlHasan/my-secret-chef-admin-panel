@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { UserOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Input, message } from "antd";
-// import { API } from "../api/api";
+import { API } from "../api/api";
 
-const AccountSetting = ({ adminProfile }) => {
+const AccountSetting = ({ adminProfile, refetch }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -14,16 +14,18 @@ const AccountSetting = ({ adminProfile }) => {
     try {
       setLoading(true);
 
-      // const formData = new FormData();
+      const formData = new FormData();
 
-      // formData.append("full_name", values.name);
-      // formData.append("email", values.email);
-      // formData.append("phone_number", values.phone_number);
+      formData.append("name", values.name);
+      formData.append("phone_number", values.phone_number);
 
-      // await API.put(`/profile/update/`, formData);
-      message.success("Profile updated successfully!");
-      // refetch();
-      setIsModalOpen(false);
+      const res = await API.patch(`/admin-dashboard/admin-profile/`, formData);
+
+      if (res.status === 200) {
+        message.success("Profile updated successfully!");
+        refetch();
+        setIsModalOpen(false);
+      }
     } catch (err) {
       message.error(err.response?.data?.detail || "Failed to update profile");
     } finally {
@@ -72,7 +74,7 @@ const AccountSetting = ({ adminProfile }) => {
               { type: "email", message: "Please enter a valid email" },
             ]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
 
           <Form.Item
@@ -90,7 +92,13 @@ const AccountSetting = ({ adminProfile }) => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" className="my-main-button" htmlType="submit" loading={loading} block>
+            <Button
+              type="primary"
+              className="my-main-button"
+              htmlType="submit"
+              loading={loading}
+              block
+            >
               Update
             </Button>
           </Form.Item>

@@ -2,8 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "http://103.186.20.115:10002/api",
-  // baseURL: "http://103.186.20.115:9001/api",
+  baseURL: "http://10.10.7.85:9001/api/",
 });
 
 API.interceptors.request.use((config) => {
@@ -17,7 +16,7 @@ API.interceptors.request.use((config) => {
 // get admin dashboard
 export const useAdminDashboard = () => {
   const getData = async () => {
-    const response = await API.get("/admin/dashboard/");
+    const response = await API.get("/admin-dashboard/admin-profile/");
     return response.data;
   };
 
@@ -40,6 +39,103 @@ export const signOutAdmin = () => {
   localStorage.removeItem("token");
   window.location.href = "/login";
 };
+
+// get admin dashboard
+export const useDashboardOverview = () => {
+  const getData = async () => {
+    const response = await API.get("/admin-dashboard/dashboard-overview/");
+    return response.data;
+  };
+
+  const {
+    data: dashboardOverview = null,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["dashboardOverview"],
+    queryFn: getData,
+  });
+
+  return { dashboardOverview, isLoading, isError, error, refetch };
+};
+
+// Users list
+export const useAllUser = ({ page = 1, limit = 10 }) => {
+  const getData = async () => {
+    const response = await API.get(
+      `/admin-dashboard/user-list/?page=${page}&limit=${limit}`
+    );
+
+    return response.data;
+  };
+
+  const {
+    data: allUsers = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["allUsers", page, limit],
+    queryFn: getData,
+  });
+
+  return { allUsers, isLoading, isError, error, refetch };
+};
+
+// Admin list
+export const useAdminList = ({ page = 1, limit = 10 }) => {
+  const getData = async () => {
+    const response = await API.get(
+      `/admin-dashboard/admin_list/?page=${page}&limit=${limit}`
+    );
+
+    return response.data;
+  };
+
+  const {
+    data: adminList = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["adminList", page, limit],
+    queryFn: getData,
+  });
+
+  return { adminList, isLoading, isError, error, refetch };
+};
+
+// payments list
+export const usePayouts = ({ page = 1, limit = 10 }) => {
+  const getData = async () => {
+    const response = await API.get(
+      `/admin-dashboard/payment-history/?page=${page}&limit=${limit}`
+    );
+
+    return response.data;
+  };
+
+  const {
+    data: payouts = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["payouts", page, limit],
+    queryFn: getData,
+  });
+
+  return { payouts, isLoading, isError, error, refetch };
+};
+
+// not used
+// not used
+// not used
 
 // users list
 export const getMockUsers = async ({ page = 1, limit = 10 }) => {
@@ -65,100 +161,8 @@ export const getMockUsers = async ({ page = 1, limit = 10 }) => {
   };
 };
 
-// get all users
-export const useUsers = ({ page = 1, limit = 10 }) => {
-  const getData = async () => {
-    const response = await API.get(`/admin/users/?page=${page}&limit=${limit}`);
 
-    return response.data;
-  };
 
-  const {
-    data: users = [],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["users", page, limit],
-    queryFn: getData,
-  });
-
-  return { users, isLoading, isError, error, refetch };
-};
-
-// get all payments
-export const useStripePayments = ({ page = 1, limit = 10 }) => {
-  const getData = async () => {
-    const response = await API.get(
-      `/admin/stripe-payments/?page=${page}&limit=${limit}`
-    );
-
-    return response.data;
-  };
-
-  const {
-    data: stripePayments = [],
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["stripePayments", page, limit],
-    queryFn: getData,
-  });
-
-  return { stripePayments, isLoading, isError, error, refetch };
-};
-
-// get all admin
-export const useAllAdmins = () => {
-  const getData = async () => {
-    const response = await API.get("/admin/administrators/");
-    return response.data;
-  };
-
-  const {
-    data: allAdmins = null,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["allAdmins"],
-    queryFn: getData,
-  });
-
-  return { allAdmins, isLoading, isError, error, refetch };
-};
-
-// administrators
-export const getMockAdministrators = async () => {
-  const response = await axios.get("/administrators_8.json");
-
-  return response.data;
-};
-
-// payments
-export const getMockPayments = async ({ page = 1, limit = 10 }) => {
-  const res = await axios.get("/payments.json");
-  const allData = res.data || [];
-
-  // Fake pagination
-  const totalPayments = allData.length;
-  const totalPages = Math.ceil(totalPayments / limit);
-  const paginatedPayments = allData.slice((page - 1) * limit, page * limit);
-
-  return {
-    data: paginatedPayments,
-    pagination: {
-      totalPayments,
-      page,
-      limit,
-      totalPages,
-    },
-  };
-};
 
 // get message
 export const getMockMessages = async () => {

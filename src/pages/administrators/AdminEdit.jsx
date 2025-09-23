@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { EditOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Input, message, Select } from "antd";
-// import { API } from "../../api/api";
 
 const AdminEdit = ({ adminProfile, refetch }) => {
   const isSuperAdmin = adminProfile.role === "superadmin";
@@ -10,10 +9,6 @@ const AdminEdit = ({ adminProfile, refetch }) => {
 
   const showModal = () => setIsModalOpen(true);
   const handleCancel = () => setIsModalOpen(false);
-
-
-
-
 
   const handleFinish = async (values) => {
     try {
@@ -37,7 +32,6 @@ const AdminEdit = ({ adminProfile, refetch }) => {
       refetch();
       setIsModalOpen(false);
     } catch (err) {
-      console.log(err, "err");
       message.error(err.response?.data?.error || "Failed to update Admin");
     } finally {
       setLoading(false);
@@ -103,13 +97,21 @@ const AdminEdit = ({ adminProfile, refetch }) => {
 
           <Form.Item label="Role" name="role">
             <Select placeholder="Select role">
-              <Option value="admin">Admin</Option>
               <Option value="superadmin">Super Admin</Option>
+              <Option value="admin">Admin</Option>
+              <Option value="categorymanagement">Category Manager</Option>
+              <Option value="moderator">Moderator</Option>
             </Select>
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" className="my-main-button" htmlType="submit" loading={loading} block>
+            <Button
+              type="primary"
+              className="my-main-button"
+              htmlType="submit"
+              loading={loading}
+              block
+            >
               Update
             </Button>
           </Form.Item>

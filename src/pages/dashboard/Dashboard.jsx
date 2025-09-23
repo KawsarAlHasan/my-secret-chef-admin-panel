@@ -3,32 +3,26 @@ import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";
 import { FaSackDollar } from "react-icons/fa6";
-// import { useAdminDashboard } from "../../api/api";
 import IsLoading from "../../components/IsLoading";
 import IsError from "../../components/IsError";
+import { useDashboardOverview } from "../../api/api";
 
 function Dashboard() {
-  // const { adminDashboard, isLoading, isError, error, refetch } =
-  //   useAdminDashboard();
+  const {
+    dashboardOverview: adminDashboard,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useDashboardOverview();
 
-  const adminDashboard = {
-    admin_profile: {
-      name: "Admin Name",
-    },
-    total_users: 100500,
-    todays_new_users: 1930,
-    total_earnings: 13490,
-    total_subscribers: 1300,
-    total_scans: 1000,
-  };
+  if (isLoading) {
+    return <IsLoading />;
+  }
 
-  // if (isLoading) {
-  //   return <IsLoading />;
-  // }
-
-  // if (isError) {
-  //   return <IsError error={error} refetch={refetch} />;
-  // }
+  if (isError) {
+    return <IsError error={error} refetch={refetch} />;
+  }
 
   return (
     <div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Modal, Form, Input, message } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
-// import { API } from "../api/api";
+import { API } from "../api/api";
 
 const ChangePassword = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,15 +13,24 @@ const ChangePassword = () => {
   const handleFinish = async (values) => {
     try {
       setLoading(true);
-      // const res = await API.post("/change-password/", {
-      //   old_password: values.old_password,
-      //   new_password: values.new_password,
-      //   retype_new_password: values.retype_new_password,
-      // });
-      message.success("Password changed successfully!");
-      setIsModalOpen(false);
-    } catch (err) {
-      message.error(err.response?.data?.detail || "Failed to change password");
+      const res = await API.patch("/admin-dashboard/password-reset/", {
+        old_password: values.old_password,
+        new_password: values.new_password,
+        confirm_password: values.retype_new_password,
+      });
+
+      if (res.status === 200) {
+        message.success("Password changed successfully!");
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      message.error(
+        error?.response?.data?.old_password
+          ? error?.response?.data?.old_password[0]
+          : error?.response?.data?.new_password
+          ? error?.response?.data?.new_password[0]
+          : "Password change failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -81,7 +90,13 @@ const ChangePassword = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" className="my-main-button" htmlType="submit" loading={loading} block>
+            <Button
+              type="primary"
+              className="my-main-button"
+              htmlType="submit"
+              loading={loading}
+              block
+            >
               Change Password
             </Button>
           </Form.Item>

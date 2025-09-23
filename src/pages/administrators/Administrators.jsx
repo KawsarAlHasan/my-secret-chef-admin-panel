@@ -1,19 +1,30 @@
-import { Avatar, message, Modal, Space, Table } from "antd";
+import { message, Modal, Space, Table } from "antd";
 import IsError from "../../components/IsError";
 import IsLoading from "../../components/IsLoading";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-// import { API, useAllAdmins } from "../../api/api";
+import { DeleteOutlined } from "@ant-design/icons";
 import AddAdmin from "./AddAmin";
 import AdminEdit from "./AdminEdit";
-import { useAdministrators } from "../../services/administratorsService";
+import { API, useAdminList } from "../../api/api";
+import { useState } from "react";
 
 function Administrators() {
-  // const { allAdmins } = useAllAdmins();
+  const [filter, setFilter] = useState({
+    page: 1,
+    limit: 10,
+  });
 
-  const { administrators, isLoading, isError, error, refetch } =
-    useAdministrators();
+  const { adminList, isLoading, isError, error, refetch } =
+    useAdminList(filter);
 
-  // 🗑️ delete confirm modal
+  const handleTableChange = (pagination) => {
+    setFilter((prev) => ({
+      ...prev,
+      page: pagination.current,
+      limit: pagination.pageSize,
+    }));
+  };
+
+  // delete confirm modal
   const showDeleteConfirm = (adminId) => {
     Modal.confirm({
       title: "Are you sure you want to delete this admin?",
@@ -23,9 +34,9 @@ function Administrators() {
       cancelText: "Cancel",
       async onOk() {
         try {
-          // await API.post(`/admin/administrators/${adminId}/action/`, {
-          //   action: "delete",
-          // });
+          await API.post(`/admin-dashboard/delete-user/`, {
+            user_id: adminId,
+          });
           message.success("Admin deleted successfully!");
           refetch();
         } catch (err) {
@@ -40,7 +51,11 @@ function Administrators() {
       title: <span>Sl no.</span>,
       dataIndex: "serial_number",
       key: "serial_number",
-      render: (serial_number) => <span className="">#{serial_number}</span>,
+      render: (text, record, index) => (
+        <span className="">
+          #{index + 1 + (filter.page - 1) * filter.limit}
+        </span>
+      ),
     },
     {
       title: <span>Name</span>,
@@ -106,10 +121,17 @@ function Administrators() {
 
       <Table
         columns={columns}
-        dataSource={administrators}
+        dataSource={adminList.results}
         rowKey="id"
         loading={isLoading}
-        pagination={false}
+        pagination={{
+          current: filter.page,
+          pageSize: filter.limit,
+          total: adminList.count,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+        }}
+        onChange={handleTableChange}
       />
     </div>
   );
