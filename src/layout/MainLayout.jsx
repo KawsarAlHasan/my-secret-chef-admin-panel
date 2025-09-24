@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Breadcrumb, Layout, Drawer } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -119,54 +119,6 @@ const MainLayout = () => {
           </Content>
         </Layout>
       </Layout>
-      {/* <style jsx global>{`
-        .custom-dark-table .ant-table {
-          background-color: #4f6572;
-          // border: 1px solid #989898;
-          color: white;
-        }
-        .custom-dark-table .ant-table-thead > tr > th {
-          background-color: #3a4a5a !important;
-          color: white !important;
-          border-bottom: 1px solid #5d6d7e;
-        }
-
-        .custom-dark-table .ant-table-thead > tr > th::before {
-          display: none !important;
-        }
-
-        .custom-dark-table .ant-table-tbody > tr > td {
-          background-color: #4f6572;
-          border-bottom: 1px solid #5d6d7e;
-        }
-        .custom-dark-table .ant-table-tbody > tr:hover > td {
-          background-color: #5d6d7e !important;
-        }
-        .dark-table-row {
-          color: white;
-        }
-        .custom-dark-table .ant-pagination-item a {
-          color: black;
-        }
-        .custom-dark-table .ant-pagination-item a:hover {
-          color: white;
-        }
-        .custom-dark-table .ant-pagination-item-active {
-          background-color: #cb5d00;
-          border-color: #5d6d7e;
-        }
-        .custom-dark-table .ant-pagination-item-active a {
-          color: white;
-        }
-        .custom-dark-table .ant-select-selector {
-          background-color: #3a4a5a !important;
-          color: white !important;
-          border-color: #5d6d7e !important;
-        }
-        .custom-dark-table .ant-select-arrow {
-          color: white !important;
-        }
-      `}</style> */}
     </Layout>
   );
 };

@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Typography, Input, Button, Avatar, message } from "antd";
+import { Modal } from "antd";
 
 function StepsViewModal({ isOpen, onClose, singleRecipe }) {
-  console.log(singleRecipe, "singleRecipe");
-
   return (
     <Modal
       title="Cooking Steps"

@@ -1,19 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Typography, Input, Button, Avatar, message } from "antd";
+import { useEffect, useState } from "react";
+import { Modal } from "antd";
 import IsError from "../../../components/IsError";
 import IsLoading from "../../../components/IsLoading";
-import { usePreviousScans } from "../../../services/previousScanService";
-import { MdOutlineDeleteForever } from "react-icons/md";
 import SingleScan from "./SingleScan";
-
-const { Title, Text } = Typography;
-const { TextArea } = Input;
+import { useUserScanHistory } from "../../../api/api";
 
 function PreviousScans({ userDetailsData, isOpen, onClose, userRefetch }) {
-  const { previousScans, isLoading, isError, error, refetch } =
-    usePreviousScans({
-      enabled: isOpen,
-    });
+  const { scanHistory, isLoading, isError, error, refetch } =
+    useUserScanHistory({ userID: userDetailsData?.id }, { enabled: isOpen });
 
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [singleScan, setSingleScan] = useState(null);
@@ -25,24 +19,16 @@ function PreviousScans({ userDetailsData, isOpen, onClose, userRefetch }) {
   }, [isOpen]);
 
   if (isError) {
-    return <IsError error={isError} refetch={refetch} />;
+    return <IsError error={error} refetch={refetch} />;
   }
 
   if (isLoading) {
     return <IsLoading />;
   }
 
-  const handleSingleScan = (id) => {
-    setSingleScan(id);
+  const handleSingleScan = (data) => {
+    setSingleScan(data);
     setIsViewModalOpen(true);
-  };
-
-  const handlePreviousScanDelete = (id) => {
-    try {
-      message.success(`${id} deleted successfully!`);
-    } catch (error) {
-      message.error("Failed to delete previous scan. Please try again.");
-    }
   };
 
   return (
@@ -55,12 +41,12 @@ function PreviousScans({ userDetailsData, isOpen, onClose, userRefetch }) {
       width={500}
     >
       <div className="max-h-[500px] overflow-y-auto">
-        {previousScans.length > 0 ? (
-          previousScans.map((scan) => (
+        {scanHistory.length > 0 ? (
+          scanHistory.map((scan) => (
             <div
               key={scan.id}
               className="flex justify-between items-center gap-2 mb-2 border p-2 rounded-md cursor-pointer hover:bg-gray-100"
-              onClick={() => handleSingleScan(scan.id)}
+              onClick={() => handleSingleScan(scan?.scans_history)}
             >
               <img src={scan.image} alt="" className="w-[40px] h-[40px]" />
               <div>

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Checkbox, message } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Form, Input, Button, message } from "antd";
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { API } from "../../api/api";
 

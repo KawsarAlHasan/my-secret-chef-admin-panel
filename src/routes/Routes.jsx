@@ -2,11 +2,9 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/login/Login";
 import ForgotPassword from "../pages/login/ForgotPassword";
 import SetNewPassword from "../pages/login/SetNewPassword";
-import PasswordUpdateLogin from "../pages/login/PasswordUpdateLogin";
 import MainLayout from "../layout/MainLayout";
 import Dashboard from "../pages/dashboard/Dashboard";
 import NotFound from "../components/NotFound";
-import Test from "../Test";
 import UserManagement from "../pages/usersManagement/UserManagement";
 import CheckCode from "../pages/login/CheckCode";
 import Administrators from "../pages/administrators/Administrators";
@@ -30,10 +28,7 @@ export const router = createBrowserRouter([
     path: "/set-new-password",
     element: <SetNewPassword />,
   },
-  {
-    path: "/password-update-login",
-    element: <PasswordUpdateLogin />,
-  },
+
   {
     path: "/",
     element: (
@@ -57,10 +52,6 @@ export const router = createBrowserRouter([
       {
         path: "/payments",
         element: <Payments />,
-      },
-      {
-        path: "/test",
-        element: <Test />,
       },
     ],
   },

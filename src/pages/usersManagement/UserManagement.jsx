@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table, Space } from "antd";
+import { Table, Space, Image, Avatar } from "antd";
 import { MdBlock } from "react-icons/md";
 import IsError from "../../components/IsError";
 import IsLoading from "../../components/IsLoading";
@@ -25,8 +25,6 @@ function UserManagement() {
   const [isSavedRecipesModal, setIsSavedRecipesModal] = useState(false);
 
   const { allUsers, isLoading, isError, error, refetch } = useAllUser(filter);
-
-  console.log(allUsers, "allUsers");
 
   const handleUserDetails = (userData) => {
     setUserDetailsData(userData);
@@ -78,15 +76,23 @@ function UserManagement() {
     },
     {
       title: <span>User</span>,
-      dataIndex: "full_name",
-      key: "full_name",
+      dataIndex: "id",
+      key: "id",
+      render: (_, record) => (
+        <div className="flex gap-2 items-center">
+           <Avatar
+            src={record?.profile} 
+            alt={record?.full_name}
+            className="!w-[45px] !h-[45px] rounded-full mt-[-5px]"
+          />
+          <div className="mt-1">
+            <h2>{record?.full_name}</h2>
+            <p className="text-sm">{record?.email}</p>
+          </div>
+        </div>
+      ),
     },
-    {
-      title: <span>Email</span>,
-      dataIndex: "email",
-      key: "email",
-      render: (email) => <span>{email}</span>,
-    },
+    
     {
       title: <span>Phone</span>,
       dataIndex: "phone",

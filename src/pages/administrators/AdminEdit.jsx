@@ -1,36 +1,42 @@
-import React, { useState } from "react";
-import { EditOutlined, UserOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { EditOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Input, message, Select } from "antd";
+import { API } from "../../api/api";
 
 const AdminEdit = ({ adminProfile, refetch }) => {
   const isSuperAdmin = adminProfile.role === "superadmin";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
-  const showModal = () => setIsModalOpen(true);
-  const handleCancel = () => setIsModalOpen(false);
+  const showModal = () => {
+    form.resetFields();
+    setIsModalOpen(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    form.resetFields();
+  };
 
   const handleFinish = async (values) => {
     try {
       setLoading(true);
 
       const submitData = {
-        full_name: values.full_name,
-        email: values.email,
-        phone: values.phone,
+        name: values.full_name,
+        phone_number: values.phone,
         role: values.role,
+        user_id: adminProfile.id,
       };
 
-      console.log(submitData, "submitData");
+      const res = await API.patch("/admin-dashboard/admin-update/", submitData);
 
-      // await API.put(
-      //   `/admin/administrators/${adminProfile.id}/update/`,
-      //   submitData
-      // );
-
-      message.success("Admin updated successfully!");
-      refetch();
-      setIsModalOpen(false);
+      if (res.status === 200) {
+        message.success("Admin updated successfully!");
+        refetch();
+        setIsModalOpen(false);
+      }
     } catch (err) {
       message.error(err.response?.data?.error || "Failed to update Admin");
     } finally {
@@ -56,6 +62,7 @@ const AdminEdit = ({ adminProfile, refetch }) => {
         footer={null}
       >
         <Form
+          form={form}
           layout="vertical"
           onFinish={handleFinish}
           initialValues={{
@@ -77,12 +84,12 @@ const AdminEdit = ({ adminProfile, refetch }) => {
           <Form.Item
             label="Email"
             name="email"
-            rules={[
-              { required: true, message: "Please enter your email" },
-              { type: "email", message: "Please enter a valid email" },
-            ]}
+            // rules={[
+            //   { required: true, message: "Please enter your email" },
+            //   { type: "email", message: "Please enter a valid email" },
+            // ]}
           >
-            <Input />
+            <Input disabled />
           </Form.Item>
 
           <Form.Item

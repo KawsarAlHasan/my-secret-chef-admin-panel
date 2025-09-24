@@ -5,8 +5,6 @@ import { FaUsers } from "react-icons/fa";
 import { FaBuildingFlag } from "react-icons/fa6";
 import { signOutAdmin, useAdminDashboard } from "../api/api";
 
-const { SubMenu } = Menu;
-
 const Sidebar = ({ onClick }) => {
   const location = useLocation();
 

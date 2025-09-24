@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, Checkbox, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
@@ -35,7 +35,6 @@ const Login = () => {
       // Redirect to the admin dashboard (replace with your route)
       window.location.href = "/";
     } catch (error) {
-      console.log(error, "error");
       message.error(
         error?.response?.data?.error || "Login failed. Please try again."
       );

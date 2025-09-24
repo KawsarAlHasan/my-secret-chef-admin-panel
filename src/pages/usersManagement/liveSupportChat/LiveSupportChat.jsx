@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Typography, Input, Button, Avatar } from "antd";
-import { useUsersForMessage } from "../../../services/usersForMessage";
 import { TbMessageChatbot } from "react-icons/tb";
 import IsError from "../../../components/IsError";
 import IsLoading from "../../../components/IsLoading";
+import { useUserChat } from "../../../api/api";
 
 const { Title, Text } = Typography;
-const { TextArea } = Input;
 
 function LiveSupportChat({ userDetailsData, isOpen, onClose, userRefetch }) {
-  const { usersForMessage, isLoading, isError, refetch } = useUsersForMessage({
-    enabled: isOpen,
-  });
+  const { chatList, isLoading, isError, error, refetch } = useUserChat(
+    { userID: userDetailsData?.id },
+    { enabled: isOpen }
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -20,7 +20,7 @@ function LiveSupportChat({ userDetailsData, isOpen, onClose, userRefetch }) {
   }, [isOpen]);
 
   if (isError) {
-    return <IsError error={isError} refetch={refetch} />;
+    return <IsError error={error} refetch={refetch} />;
   }
 
   if (isLoading) {
@@ -65,53 +65,58 @@ function LiveSupportChat({ userDetailsData, isOpen, onClose, userRefetch }) {
           borderRadius: 8,
         }}
       >
-        {usersForMessage?.map((msg) => (
-          <div
-            key={msg.id}
-            style={{
-              display: "flex",
-              justifyContent: msg.sender === "bot" ? "flex-start" : "flex-end",
-              marginBottom: 10,
-            }}
-          >
-            <div className="flex items-center gap-1">
-              {msg.sender == "bot" && (
-                <Avatar
-                  className="mt-4"
-                  size={40}
-                  src={userDetailsData?.profile}
-                />
-              )}
+        {chatList?.length > 0 ? (
+          chatList?.map((msg) => (
+            <div
+              key={msg.id}
+              style={{
+                display: "flex",
+                justifyContent:
+                  msg.sender !== "bot" ? "flex-start" : "flex-end",
+                marginBottom: 10,
+              }}
+            >
+              <div className="flex items-center gap-1">
+                {msg.sender !== "bot" && (
+                  <Avatar
+                    className="mt-4"
+                    size={40}
+                    src={userDetailsData?.profile}
+                  />
+                )}
 
-              <div className="flex flex-col max-w-72">
-                <span
-                  className={`text-xs text-gray-400 ${
-                    msg.sender === "bot" ? "self-start" : "self-end"
-                  }`}
-                >
-                  {new Date(msg.date).toLocaleTimeString()}
-                </span>
-                <div
-                  className={`px-3 py-2 rounded-xl ${
-                    msg.sender === "bot"
-                      ? "bg-blue-50 text-black self-start"
-                      : "bg-green-500 text-white self-end"
-                  }`}
-                >
-                  {msg.message}
+                <div className="flex flex-col max-w-72">
+                  <span
+                    className={`text-xs text-gray-400 ${
+                      msg.sender !== "bot" ? "self-start" : "self-end"
+                    }`}
+                  >
+                    {new Date(msg.date).toLocaleTimeString()}
+                  </span>
+                  <div
+                    className={`px-3 py-2 rounded-xl ${
+                      msg.sender !== "bot"
+                        ? "bg-blue-50 text-black self-start"
+                        : "bg-green-500 text-white self-end"
+                    }`}
+                  >
+                    {msg.message}
+                  </div>
                 </div>
-              </div>
 
-              {msg.sender !== "bot" && (
-                <Avatar
-                  className="mt-4"
-                  size={40}
-                  icon={<TbMessageChatbot />}
-                />
-              )}
+                {msg.sender == "bot" && (
+                  <Avatar
+                    className="mt-4"
+                    size={40}
+                    icon={<TbMessageChatbot />}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div className="text-center p-2 border text-[18px]">No Messages</div>
+        )}
       </div>
     </Modal>
   );

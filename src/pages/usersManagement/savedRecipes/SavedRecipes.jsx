@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Typography, Input, Button, Avatar, message } from "antd";
-import { useSavedRecipes } from "../../../services/recipesService";
+import { useState } from "react";
+import { Modal } from "antd";
 import IsError from "../../../components/IsError";
 import IsLoading from "../../../components/IsLoading";
-import { MdOutlineDeleteForever } from "react-icons/md";
 import StepsViewModal from "./StepsViewModal";
+import { useUserSavedRecipes } from "../../../api/api";
 
 function SavedRecipes({ userDetailsData, isOpen, onClose, userRefetch }) {
-  const { savedRecipesData, isLoading, isError, error, refetch } =
-    useSavedRecipes({
-      enabled: isOpen,
-    });
+  const { savedRecipes, isLoading, isError, error, refetch } =
+    useUserSavedRecipes({ userID: userDetailsData?.id }, { enabled: isOpen });
 
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [singleRecipe, setSingleRecipe] = useState(null);
 
   if (isError) {
-    return <IsError error={isError} refetch={refetch} />;
+    return <IsError error={error} refetch={refetch} />;
   }
 
   if (isLoading) {
@@ -26,14 +23,6 @@ function SavedRecipes({ userDetailsData, isOpen, onClose, userRefetch }) {
   const handleSingleRecipe = (steps) => {
     setSingleRecipe(steps);
     setIsViewModalOpen(true);
-  };
-
-  const handlePreviousScanDelete = (id) => {
-    try {
-      message.success(`${id} deleted successfully!`);
-    } catch (error) {
-      message.error("Failed to delete previous scan. Please try again.");
-    }
   };
 
   return (
@@ -46,14 +35,18 @@ function SavedRecipes({ userDetailsData, isOpen, onClose, userRefetch }) {
       width={500}
     >
       <div className="max-h-[500px] overflow-y-auto">
-        {savedRecipesData.length > 0 ? (
-          savedRecipesData.map((scan) => (
+        {savedRecipes.length > 0 ? (
+          savedRecipes.map((scan) => (
             <div
               key={scan.id}
               className="flex items-center gap-2 mb-2 border p-2 rounded-md cursor-pointer hover:bg-gray-100"
               onClick={() => handleSingleRecipe(scan.steps)}
             >
-              <img src={scan.image} alt="" className="w-[40px] h-[40px]" />
+              <img
+                src={scan.image}
+                alt={scan.name}
+                className="w-[40px] h-[40px]"
+              />
               <p className="text-[16px] font-semibold">{scan.name}</p>
             </div>
           ))

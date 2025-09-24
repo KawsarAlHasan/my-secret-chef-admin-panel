@@ -1,4 +1,3 @@
-import React from "react";
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { FaUsers } from "react-icons/fa";

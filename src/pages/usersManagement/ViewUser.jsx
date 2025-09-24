@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Modal, Typography, Button, Space, notification } from "antd";
+import { useState } from "react";
+import { Modal, Typography, Button, Space, notification, Tag } from "antd";
 import { API } from "../../api/api";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 function ViewUser({ userDetailsData, isOpen, onClose, refetch }) {
   const [enableLoading, setEnableLoading] = useState(false);
@@ -18,18 +18,23 @@ function ViewUser({ userDetailsData, isOpen, onClose, refetch }) {
     });
   };
 
-
   const handleUserEnable = async (userData) => {
     setEnableLoading(true);
     try {
-      // await API.post(`/admin/users/${userData.id}/action/`, {
-      //   action: "enable",
-      // });
-      openNotification("success", "Success", "User enabled successfully");
-      refetch();
-      onClose();
+      const response = await API.patch(`/admin-dashboard/user-block-unblock/`, {
+        user_id: userData.id,
+        block: false,
+      });
+
+      if (response.status === 200) {
+        openNotification("success", "Success", "User Unblocked successfully");
+        refetch();
+        onClose();
+      }
     } catch (error) {
-      openNotification("error", "Error", "Failed to enable user");
+      const errorMessage =
+        error.response?.data?.error || "Failed to unblock user";
+      openNotification("error", "Error", errorMessage);
     } finally {
       setEnableLoading(false);
     }
@@ -38,14 +43,21 @@ function ViewUser({ userDetailsData, isOpen, onClose, refetch }) {
   const handleUserDisable = async (userData) => {
     setDisableLoading(true);
     try {
-      // await API.post(`/admin/users/${userData.id}/action/`, {
-      //   action: "disable",
-      // });
-      openNotification("success", "Success", "User disabled successfully");
-      refetch();
-      onClose();
+      const response = await API.patch(`/admin-dashboard/user-block-unblock/`, {
+        user_id: userData.id,
+        block: true,
+      });
+
+      if (response.status === 200) {
+        openNotification("success", "Success", "User Blocked successfully");
+        refetch();
+        onClose();
+      }
     } catch (error) {
-      openNotification("error", "Error", "Failed to disable user");
+      const errorMessage =
+        error.response?.data?.error || "Failed to block user";
+
+      openNotification("error", "Error", errorMessage);
     } finally {
       setDisableLoading(false);
     }
@@ -54,14 +66,20 @@ function ViewUser({ userDetailsData, isOpen, onClose, refetch }) {
   const handleUserDelete = async (userData) => {
     setDeleteLoading(true);
     try {
-      // await API.post(`/admin/users/${userData.id}/action/`, {
-      //   action: "delete",
-      // });
-      openNotification("success", "Success", "User deleted successfully");
-      refetch();
-      onClose();
+      const response = await API.post(`/admin-dashboard/delete-user/`, {
+        user_id: userData.id,
+      });
+
+      if (response.status === 200) {
+        openNotification("success", "Success", "User deleted successfully");
+        refetch();
+        onClose();
+      }
     } catch (error) {
-      openNotification("error", "Error", "Failed to delete user");
+      const errorMessage =
+        error.response?.data?.error || "Failed to delete user";
+
+      openNotification("error", "Error", errorMessage);
     } finally {
       setDeleteLoading(false);
     }
@@ -93,23 +111,33 @@ function ViewUser({ userDetailsData, isOpen, onClose, refetch }) {
             <Text strong>Subscription: </Text>
             {userDetailsData.subscription}
           </p>
+          <p>
+            <Text strong>Status: </Text>
+            {userDetailsData.is_active == true ? (
+              <Tag color="green">Active</Tag>
+            ) : (
+              <Tag color="red">Blocked</Tag>
+            )}
+          </p>
 
           <Space style={{ marginTop: 20 }}>
-            <Button
-              danger
-              loading={disableLoading}
-              onClick={() => handleUserDisable(userDetailsData)}
-            >
-              Disable User
-            </Button>
-
-            <Button
-              type="primary"
-              loading={enableLoading}
-              onClick={() => handleUserEnable(userDetailsData)}
-            >
-              Enable User
-            </Button>
+            {userDetailsData.is_active == true ? (
+              <Button
+                danger
+                loading={disableLoading}
+                onClick={() => handleUserDisable(userDetailsData)}
+              >
+                Block User
+              </Button>
+            ) : (
+              <Button
+                type="primary"
+                loading={enableLoading}
+                onClick={() => handleUserEnable(userDetailsData)}
+              >
+                Unblock User
+              </Button>
+            )}
 
             <Button
               danger

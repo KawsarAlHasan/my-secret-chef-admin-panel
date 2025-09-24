@@ -133,61 +133,77 @@ export const usePayouts = ({ page = 1, limit = 10 }) => {
   return { payouts, isLoading, isError, error, refetch };
 };
 
-// not used
-// not used
-// not used
-
-// users list
-export const getMockUsers = async ({ page = 1, limit = 10 }) => {
-  const res = await axios.get("/users_100.json");
-  const allUsers = res.data || [];
-
-  // Fake filtering (if status or role is provided)
-  let filteredUsers = allUsers;
-
-  // Fake pagination
-  const totalUser = filteredUsers.length;
-  const totalPages = Math.ceil(totalUser / limit);
-  const paginatedUsers = filteredUsers.slice((page - 1) * limit, page * limit);
-
-  return {
-    data: paginatedUsers,
-    pagination: {
-      totalUser,
-      page,
-      limit,
-      totalPages,
-    },
+// user chat
+export const useUserChat = ({ userID }, options = {}) => {
+  const getData = async ({ queryKey }) => {
+    const [_key, userID] = queryKey;
+    const response = await API.get(
+      `/admin-dashboard/user-chathistory/${userID}/`
+    );
+    return response.data;
   };
+
+  const {
+    data: chatList = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["chatList", userID],
+    queryFn: getData,
+    enabled: !!userID && (options.enabled ?? true),
+  });
+
+  return { chatList, isLoading, isError, error, refetch };
 };
 
+// user scan history
+export const useUserScanHistory = ({ userID }, options = {}) => {
+  const getData = async ({ queryKey }) => {
+    const [_key, userID] = queryKey;
+    const response = await API.get(
+      `/admin-dashboard/user-scan-history/${userID}/`
+    );
+    return response.data;
+  };
 
+  const {
+    data: scanHistory = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["scanHistory", userID],
+    queryFn: getData,
+    enabled: !!userID && (options.enabled ?? true),
+  });
 
-
-// get message
-export const getMockMessages = async () => {
-  const response = await axios.get("/user_chat.json");
-
-  return response.data;
+  return { scanHistory, isLoading, isError, error, refetch };
 };
 
-// get previous scans
-export const getMockPreviousScans = async () => {
-  const response = await axios.get("/previousScans.json");
+// user saved recipes
+export const useUserSavedRecipes = ({ userID }, options = {}) => {
+  const getData = async ({ queryKey }) => {
+    const [_key, userID] = queryKey;
+    const response = await API.get(
+      `/admin-dashboard/user-saved-recipes/${userID}/`
+    );
+    return response.data;
+  };
 
-  return response.data;
-};
+  const {
+    data: savedRecipes = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["savedRecipes", userID],
+    queryFn: getData,
+    enabled: !!userID && (options.enabled ?? true),
+  });
 
-// get Single scans
-export const getMockSingleScans = async () => {
-  const response = await axios.get("/singleScan.json");
-
-  return response.data;
-};
-
-// get Saved Recipes
-export const getMockSavedRecipes = async () => {
-  const response = await axios.get("/recipes.json");
-
-  return response.data;
+  return { savedRecipes, isLoading, isError, error, refetch };
 };

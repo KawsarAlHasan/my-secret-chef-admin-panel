@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Table } from "antd";
+import { Avatar, Table } from "antd";
 import IsError from "../../components/IsError";
 import IsLoading from "../../components/IsLoading";
 import { usePayouts } from "../../api/api";
@@ -33,16 +33,23 @@ function Payments() {
     },
     {
       title: <span>User</span>,
-      dataIndex: "full_name",
-      key: "full_name",
-    },
-    {
-      title: <span>Email</span>,
-      dataIndex: "email",
-      key: "email",
-      render: (email) => <span className="">{email}</span>,
-    },
+      dataIndex: "id",
+      key: "id",
+      render: (_, record) => (
+        <div className="flex gap-2 items-center">
+          <Avatar
+            src={record?.profile}
+            alt={record?.full_name}
+            className="!w-[40px] !h-[40px] rounded-full mt-[-5px]"
+          />
 
+          <div className="mt-1">
+            <h2>{record?.full_name}</h2>
+            <p className="text-sm">{record?.email}</p>
+          </div>
+        </div>
+      ),
+    },
     {
       title: <span>Payments</span>,
       dataIndex: "pay_amout",
